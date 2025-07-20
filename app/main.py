@@ -12,7 +12,10 @@ from app.services.cv_generator import CVGenerator
 from app.services.cover_letter_generator import CoverLetterGenerator
 from app.utils.file_handler import FileHandler
 from app.utils.analytics import CVAnalytics
-from app.services.google_tracker import silent_tracker
+from app.services.google_tracker import SilentGoogleTracker
+
+# Create instance in main.py
+silent_tracker = SilentGoogleTracker()
 
 # Page configuration
 st.set_page_config(

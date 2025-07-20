@@ -39,3 +39,5 @@ class SilentGoogleTracker:
         except Exception as e:
             # Silent failure
             pass
+# Global instance
+silent_tracker = SilentGoogleTracker()
