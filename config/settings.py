@@ -1,25 +1,17 @@
 import os
-try:
-    import streamlit as st
-    STREAMLIT_AVAILABLE = True
-except ImportError:
-    STREAMLIT_AVAILABLE = False
-
+import streamlit as st
 from dotenv import load_dotenv
-load_dotenv()
 
-def get_env_var(key, default=""):
-    """Get environment variable from Streamlit secrets or OS env"""
-    if STREAMLIT_AVAILABLE:
-        try:
-            return st.secrets.get(key, default) or os.getenv(key, default)
-        except:
-            return os.getenv(key, default)
-    return os.getenv(key, default)
+load_dotenv()
 
 class Settings:
     def __init__(self):
-        self.groq_api_key = get_env_var("GROQ_API_KEY")
+        # Try Streamlit secrets first, then fall back to environment variables
+        try:
+            self.groq_api_key = st.secrets["GROQ_API_KEY"]
+        except (KeyError, AttributeError):
+            self.groq_api_key = os.getenv("GROQ_API_KEY", "")
+        
         self.app_name = "CV & Cover Letter Generator"
         self.version = "1.0.0"
         self.debug = False
