@@ -85,11 +85,21 @@ def main():
         # Generation options
         st.markdown("### 🎯 Generation Options")
         
-        tone_option = st.selectbox(
-            "Cover Letter Tone",
-            ["professional", "enthusiastic", "creative"],
-            help="Choose the tone for your cover letter"
-        )
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            cv_tone = st.selectbox(
+                "CV Tone",
+                ["Technical", "Achievement-focused", "Leadership-oriented"],
+                help="Choose the tone for your tailored CV"
+            )
+            
+        with col2:
+            cover_letter_tone = st.selectbox(
+                "Cover Letter Tone",
+                ["Professional", "Enthusiastic", "Creative"],
+                help="Choose the tone for your cover letter"
+            )
         
         cv_focus = st.multiselect(
             "CV Focus Areas",
@@ -99,8 +109,16 @@ def main():
         )
         
         generate_multiple = st.checkbox(
-            "Generate Multiple Versions",
+            "Generate Multiple Cover Letter Versions",
             help="Generate cover letters with different tones"
+        )
+        
+        st.markdown("---")
+        st.markdown("### 👀 Preview Options")
+        preview_mode = st.selectbox(
+            "Preview Style",
+            ["Full", "Split View", "Diff Comparison"],
+            help="Choose how to preview generated documents"
         )
     
     # Main content area
@@ -332,51 +350,82 @@ def main():
     with tab3:
         st.markdown('<div class="section-header">Generated Documents</div>', unsafe_allow_html=True)
         
-        # Display generated CV
-        if st.session_state.generated_cv:
-            st.markdown("### 📄 Tailored CV")
-            st.text_area("Generated CV Content", st.session_state.generated_cv, height=400)
+        # Preview controls
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            st.markdown("**Preview Settings**")
+            font_size = st.slider("Font Size", 10, 18, 14)
+            line_spacing = st.slider("Line Spacing", 1.0, 2.0, 1.5)
+        
+        # Preview pane
+        preview_style = f"font-size: {font_size}px; line-height: {line_spacing};"
+        
+        if st.session_state.generated_cv or st.session_state.generated_cover_letter:
+            if preview_mode == "Full":
+                if st.session_state.generated_cv:
+                    st.markdown("### 📄 Tailored CV")
+                    st.markdown(f'<div style="{preview_style} white-space: pre-wrap;">{st.session_state.generated_cv}</div>',
+                                unsafe_allow_html=True)
+                
+                if st.session_state.generated_cover_letter:
+                    st.markdown("### 💌 Cover Letter")
+                    if isinstance(st.session_state.generated_cover_letter, dict):
+                        version_key = list(st.session_state.generated_cover_letter.keys())[0]
+                        st.markdown(f'<div style="{preview_style} white-space: pre-wrap;">{st.session_state.generated_cover_letter[version_key]}</div>',
+                                    unsafe_allow_html=True)
             
-            # Download button for CV
+            elif preview_mode == "Split View":
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.session_state.generated_cv:
+                        st.markdown("### 📄 CV Preview")
+                        st.markdown(f'<div style="{preview_style} white-space: pre-wrap;">{st.session_state.generated_cv}</div>',
+                                    unsafe_allow_html=True)
+                with col2:
+                    if st.session_state.generated_cover_letter:
+                        st.markdown("### 💌 Cover Letter Preview")
+                        if isinstance(st.session_state.generated_cover_letter, dict):
+                            version_key = list(st.session_state.generated_cover_letter.keys())[0]
+                            st.markdown(f'<div style="{preview_style} white-space: pre-wrap;">{st.session_state.generated_cover_letter[version_key]}</div>',
+                                        unsafe_allow_html=True)
+            
+            elif preview_mode == "Diff Comparison" and st.session_state.cv_content and st.session_state.generated_cv:
+                st.markdown("### 🔍 CV Comparison")
+                original_lines = st.session_state.cv_content.split('\n')
+                generated_lines = st.session_state.generated_cv.split('\n')
+                
+                for i in range(max(len(original_lines), len(generated_lines))):
+                    original = original_lines[i] if i < len(original_lines) else ""
+                    generated = generated_lines[i] if i < len(generated_lines) else ""
+                    
+                    if original != generated:
+                        st.markdown(f'<div style="{preview_style} color: red;">- {original}</div>', unsafe_allow_html=True)
+                        st.markdown(f'<div style="{preview_style} color: green;">+ {generated}</div>', unsafe_allow_html=True)
+                    else:
+                        st.markdown(f'<div style="{preview_style}">  {original}</div>', unsafe_allow_html=True)
+        
+        # Download section
+        st.markdown("---")
+        st.markdown("### 📥 Download Documents")
+        
+        if st.session_state.generated_cv:
             st.download_button(
-                label="📥 Download Tailored CV",
+                label="Download Tailored CV",
                 data=st.session_state.generated_cv,
-                file_name="tailored_cv.txt",
-                mime="text/plain"
+                file_name=f"tailored_cv_{cv_tone.lower()}.txt",
+                mime="text/plain",
+                use_container_width=True
             )
         
-        # Display generated cover letter(s)
         if st.session_state.generated_cover_letter:
-            st.markdown("### 💌 Cover Letter(s)")
-            
             if isinstance(st.session_state.generated_cover_letter, dict):
-                if len(st.session_state.generated_cover_letter) > 1:
-                    # Multiple versions
-                    selected_version = st.selectbox(
-                        "Select version to view:",
-                        list(st.session_state.generated_cover_letter.keys())
-                    )
-                    st.text_area(
-                        f"Cover Letter - {selected_version.title()} Version",
-                        st.session_state.generated_cover_letter[selected_version],
-                        height=500
-                    )
-                else:
-                    # Single version
-                    version_key = list(st.session_state.generated_cover_letter.keys())[0]
-                    st.text_area(
-                        "Generated Cover Letter",
-                        st.session_state.generated_cover_letter[version_key],
-                        height=500
-                    )
-                
-                # Download buttons
                 for version, content in st.session_state.generated_cover_letter.items():
                     st.download_button(
-                        label=f"📥 Download {version.title()} Cover Letter",
+                        label=f"Download {version.title()} Cover Letter",
                         data=content,
                         file_name=f"cover_letter_{version}.txt",
-                        mime="text/plain"
+                        mime="text/plain",
+                        use_container_width=True
                     )
     
     with tab4:
