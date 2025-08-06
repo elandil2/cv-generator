@@ -13,6 +13,7 @@ from app.services.cover_letter_generator import CoverLetterGenerator
 from app.utils.file_handler import FileHandler
 from app.utils.analytics import CVAnalytics
 from app.services.google_tracker import SilentGoogleTracker
+from app.services.pdf_generator import PDFGenerator
 
 # Create instance in main.py
 silent_tracker = SilentGoogleTracker()
@@ -409,24 +410,46 @@ def main():
         st.markdown("### 📥 Download Documents")
         
         if st.session_state.generated_cv:
-            st.download_button(
-                label="Download Tailored CV",
-                data=st.session_state.generated_cv,
-                file_name=f"tailored_cv_{cv_tone.lower()}.txt",
-                mime="text/plain",
-                use_container_width=True
-            )
+            col1, col2 = st.columns(2)
+            with col1:
+                st.download_button(
+                    label="Download Tailored CV (TXT)",
+                    data=st.session_state.generated_cv,
+                    file_name=f"tailored_cv_{cv_tone.lower()}.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
+            with col2:
+                cv_pdf = PDFGenerator.generate_pdf(st.session_state.generated_cv)
+                st.download_button(
+                    label="Download Tailored CV (PDF)",
+                    data=cv_pdf,
+                    file_name=f"tailored_cv_{cv_tone.lower()}.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
         
         if st.session_state.generated_cover_letter:
             if isinstance(st.session_state.generated_cover_letter, dict):
                 for version, content in st.session_state.generated_cover_letter.items():
-                    st.download_button(
-                        label=f"Download {version.title()} Cover Letter",
-                        data=content,
-                        file_name=f"cover_letter_{version}.txt",
-                        mime="text/plain",
-                        use_container_width=True
-                    )
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.download_button(
+                            label=f"Download {version.title()} Cover Letter (TXT)",
+                            data=content,
+                            file_name=f"cover_letter_{version}.txt",
+                            mime="text/plain",
+                            use_container_width=True
+                        )
+                    with col2:
+                        letter_pdf = PDFGenerator.generate_pdf(content)
+                        st.download_button(
+                            label=f"Download {version.title()} Cover Letter (PDF)",
+                            data=letter_pdf,
+                            file_name=f"cover_letter_{version}.pdf",
+                            mime="application/pdf",
+                            use_container_width=True
+                        )
     
     with tab4:
         st.markdown('<div class="section-header">Analytics & Insights</div>', unsafe_allow_html=True)
