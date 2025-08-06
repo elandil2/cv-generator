@@ -277,9 +277,9 @@ def main():
                                 st.session_state.cv_content,
                                 st.session_state.job_description,
                                 company_info,
-                                tone=tone_option
+                                tone=cover_letter_tone.lower()
                             )
-                            st.session_state.generated_cover_letter = {tone_option: generated_letter}
+                            st.session_state.generated_cover_letter = {cover_letter_tone.lower(): generated_letter}
                         
                         st.success("✅ Cover letter(s) generated successfully!")
                         
@@ -328,9 +328,9 @@ def main():
                             st.session_state.cv_content,
                             st.session_state.job_description,
                             company_info,
-                            tone=tone_option
+                            tone=cover_letter_tone.lower()
                         )
-                        st.session_state.generated_cover_letter = {tone_option: generated_letter}
+                        st.session_state.generated_cover_letter = {cover_letter_tone.lower(): generated_letter}
                         
                         st.success("✅ Both documents generated successfully!")
                         
