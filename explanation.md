@@ -44,24 +44,53 @@ if st.button("Generate Tailored CV"):
     st.download_button("Download CV", optimized_cv)
 ```
 
-**3. LLM Integration**  
-The `LLMService` class (`app/services/llm_service.py`) handles Groq API communication:
+**3. LLM Integration & Agent Context**
+The `LLMService` class (`app/services/llm_service.py`) handles Groq API communication with enhanced error handling and retry logic:
 
 ```python
 class LLMService:
     def __init__(self):
-        self.client = groq.Groq(api_key=settings.GROQ_API_KEY)  # From .env
-    
-    def generate_response(self, system_prompt, user_prompt):
-        response = self.client.chat.completions.create(
-            model="llama3-8b-8192",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ]
-        )
-        return response.choices[0].message.content
+        self.client = groq.Groq(api_key=settings.GROQ_API_KEY)
+        self.model = "llama3-8b-8192"
+        self.max_retries = 3
+
+    def generate_response(self, system_prompt, user_prompt, temperature=0.7, max_tokens=2048):
+        # Enhanced with retry logic and better error handling
+        for attempt in range(self.max_retries):
+            try:
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    timeout=30
+                )
+                return response.choices[0].message.content
+            except Exception as e:
+                if attempt == self.max_retries - 1:
+                    raise Exception(f"Failed after {self.max_retries} attempts: {str(e)}")
+                time.sleep(2)
 ```
+
+**Role-Specific Agent Context**
+The system now includes specialized prompts for different tech roles, making the LLM act as a domain expert:
+
+```python
+# Example: Data Scientist Agent Context
+ROLE_PROMPTS = {
+    "data_scientist": """
+    You are a senior data science recruiter and CV optimization expert.
+    Focus on: statistical modeling, machine learning algorithms, data visualization,
+    Python/R proficiency, big data tools (Spark, Hadoop), cloud platforms (AWS, GCP).
+    Prioritize: predictive modeling experience, A/B testing, feature engineering.
+    """
+}
+```
+
+When a user selects "Data Scientist" as their target role, the agent receives this specialized context, enabling more accurate keyword matching and role-specific optimizations.
 
 **Live Demonstration**  
 After uploading a CV and job description, the app:

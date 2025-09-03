@@ -23,11 +23,12 @@ sequenceDiagram
     participant CVGenerator
     participant LLMService
     participant GroqAPI
-    
-    User->>Streamlit: Upload CV + Job Description
-    Streamlit->>CVGenerator: Generate Tailored CV
-    CVGenerator->>LLMService: Create Optimization Prompt
-    LLMService->>GroqAPI: Send Request
+
+    User->>Streamlit: Upload CV + Job Description + Select Job Type
+    Streamlit->>CVGenerator: Generate Tailored CV (with job_type)
+    CVGenerator->>CVGenerator: Select Role-Specific Prompt
+    CVGenerator->>LLMService: Create Optimization Prompt with Agent Context
+    LLMService->>GroqAPI: Send Request with Enhanced Error Handling
     GroqAPI-->>LLMService: Return Optimized CV
     LLMService-->>CVGenerator: Processed Content
     CVGenerator-->>Streamlit: Generated CV

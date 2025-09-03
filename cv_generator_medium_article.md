@@ -56,9 +56,21 @@ Access it at `http://localhost:8501` in your browser.
 ## Step 5: Using the Application
 1. **Upload your CV** (PDF, DOCX or TXT)
 2. **Paste the job description**
-3. **Select tone and focus areas**
-4. **Generate tailored documents**
-5. **Preview and download results**
+3. **Select your target job type** (Data Scientist, ML Engineer, GenAI Engineer, etc.) for role-specific optimization
+4. **Select tone and focus areas**
+5. **Generate tailored documents**
+6. **Preview and download results**
+
+## Step 5.5: Job Type Selection Benefits
+The application includes specialized AI prompts for different tech roles:
+
+- **Data Scientist**: Optimizes for statistical modeling, ML algorithms, data visualization, Python/R, big data tools
+- **ML Engineer**: Focuses on model deployment, MLOps, containerization, CI/CD, production systems
+- **GenAI Engineer**: Prioritizes LLM fine-tuning, prompt engineering, RAG systems, transformer architectures
+- **Software Engineer**: Covers full-stack development, frameworks, databases, cloud services
+- **DevOps Engineer**: Emphasizes cloud platforms, containerization, infrastructure as code, security
+
+Selecting the correct job type enables the AI to use industry-specific knowledge for better keyword matching and optimization.
 
 ## Step 6: Customization Options
 ### Change Templates

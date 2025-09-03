@@ -87,9 +87,22 @@ Get your Groq API key from [console.groq.com](https://console.groq.com)
 
 1. **Upload your CV** or paste content directly
 2. **Add job description** for the position you're applying to
-3. **Configure settings** like tone and focus areas
-4. **Generate documents** with AI-powered customization
-5. **Download results** in your preferred format
+3. **Select target job type** for role-specific optimization (Data Scientist, ML Engineer, GenAI, etc.)
+4. **Configure settings** like tone and focus areas
+5. **Generate documents** with AI-powered customization
+6. **Download results** in your preferred format
+
+## 🎯 Role-Specific Optimization
+
+The CV generator includes specialized prompts for different tech roles to maximize keyword matching and relevance:
+
+- **Data Scientist**: Focuses on statistical modeling, ML algorithms, data visualization, Python/R, big data tools
+- **ML Engineer**: Emphasizes model deployment, MLOps, containerization, CI/CD, production ML systems
+- **GenAI Engineer**: Prioritizes LLM fine-tuning, prompt engineering, RAG systems, transformer architectures
+- **Software Engineer**: Covers full-stack development, frameworks, databases, cloud services, system design
+- **DevOps Engineer**: Focuses on cloud platforms, containerization, CI/CD, infrastructure as code, security
+
+Select your target role in the sidebar for optimized results tailored to industry-specific requirements.
 
 ## 🏗️ Architecture
 

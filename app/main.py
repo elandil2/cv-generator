@@ -85,23 +85,40 @@ def main():
         
         # Generation options
         st.markdown("### 🎯 Generation Options")
-        
+
+        # Job type selection for better optimization
+        job_type_options = {
+            "General": "general",
+            "Data Scientist": "data_scientist",
+            "ML Engineer": "ml_engineer",
+            "GenAI Engineer": "genai_engineer",
+            "Software Engineer": "software_engineer",
+            "DevOps Engineer": "devops_engineer"
+        }
+
+        selected_job_type_display = st.selectbox(
+            "Target Job Type",
+            list(job_type_options.keys()),
+            help="Select your target job type for role-specific optimization"
+        )
+        selected_job_type = job_type_options[selected_job_type_display]
+
         col1, col2 = st.columns(2)
-        
+
         with col1:
             cv_tone = st.selectbox(
                 "CV Tone",
                 ["Technical", "Achievement-focused", "Leadership-oriented"],
                 help="Choose the tone for your tailored CV"
             )
-            
+
         with col2:
             cover_letter_tone = st.selectbox(
                 "Cover Letter Tone",
                 ["Professional", "Enthusiastic", "Creative"],
                 help="Choose the tone for your cover letter"
             )
-        
+
         cv_focus = st.multiselect(
             "CV Focus Areas",
             ["Technical Skills", "Leadership", "Achievements", "Education", "Certifications"],
@@ -222,7 +239,8 @@ def main():
                         generated_cv = cv_generator.generate_tailored_cv(
                             st.session_state.cv_content,
                             st.session_state.job_description,
-                            user_preferences
+                            job_type=selected_job_type,
+                            user_preferences=user_preferences
                         )
                         
                         st.session_state.generated_cv = generated_cv
@@ -314,7 +332,8 @@ def main():
                         generated_cv = cv_generator.generate_tailored_cv(
                             st.session_state.cv_content,
                             st.session_state.job_description,
-                            user_preferences
+                            job_type=selected_job_type,
+                            user_preferences=user_preferences
                         )
                         st.session_state.generated_cv = generated_cv
                         
