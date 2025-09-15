@@ -15,7 +15,7 @@ class LLMService:
         self.max_retries = 3
         self.retry_delay = 2  # seconds
 
-    def generate_response(self, system_prompt: str, user_prompt: str, temperature: float = 0.7, max_tokens: int = 2048) -> str:
+    def generate_response(self, system_prompt: str, user_prompt: str, temperature: float = 0.2, max_tokens: int = 2048) -> str:
         """
         Generate response with enhanced error handling and retry logic.
         """
