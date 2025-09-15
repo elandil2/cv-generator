@@ -11,7 +11,7 @@ class LLMService:
 
         # Initialize Groq client
         self.client = groq.Groq(api_key=settings.groq_api_key)
-        self.model = "llama3-8b-8192"
+        self.model = "openai/gpt-oss-120b"
         self.max_retries = 3
         self.retry_delay = 2  # seconds
 
